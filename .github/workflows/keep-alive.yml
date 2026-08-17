@@ -14,12 +14,13 @@ jobs:
       - name: Ping Supabase project
         run: |
           echo "Pinging Supabase to prevent pausing..."
-          
+
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${{ secrets.SUPABASE_URL }}/rest/v1/?apikey=${{ secrets.SUPABASE_ANON_KEY }}")
-          
+            "${{ secrets.SUPABASE_URL }}/rest/v1/debt_cases?select=id&limit=1" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}")
+
           echo "Response status: $HTTP_STATUS"
-          
+
           if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
             echo "✅ Supabase is alive"
           else
