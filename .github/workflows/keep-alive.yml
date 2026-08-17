@@ -1,0 +1,28 @@
+name: Keep Supabase Alive
+
+on:
+  schedule:
+    # Runs every day at 9:00pm UTC = 7:00am AEST
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+    # This lets you run it manually from GitHub to test
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase project
+        run: |
+          echo "Pinging Supabase to prevent pausing..."
+          
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
+            "${{ secrets.SUPABASE_URL }}/rest/v1/?apikey=${{ secrets.SUPABASE_ANON_KEY }}")
+          
+          echo "Response status: $HTTP_STATUS"
+          
+          if [ "$HTTP_STATUS" -ge 200 ] && [ "$HTTP_STATUS" -lt 300 ]; then
+            echo "✅ Supabase is alive"
+          else
+            echo "⚠️ Unexpected status code: $HTTP_STATUS"
+            exit 1
+          fi
