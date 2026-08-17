@@ -14,7 +14,9 @@ jobs:
           echo "Pinging Supabase to prevent pausing..."
 
           HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" \
-            "${{ secrets.SUPABASE_URL }}/auth/v1/health")
+            "${{ secrets.SUPABASE_URL }}/auth/v1/health" \
+            -H "apikey: ${{ secrets.SUPABASE_ANON_KEY }}" \
+            -H "Authorization: Bearer ${{ secrets.SUPABASE_ANON_KEY }}")
 
           echo "Response status: $HTTP_STATUS"
 
